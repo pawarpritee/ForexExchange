@@ -1,0 +1,54 @@
+<div class="exchange">
+  <div class="menu-area">
+
+
+      <!-- base currency section -->
+      <div class="dib">
+        <div class="selector-title">Base Currency</div>
+        <app-dropdown  [exclude]="currencies.selected.currency" [list]="baseCurrency.dropdownList"
+          [(active)]="baseCurrency.active"></app-dropdown>
+      </div>
+      <!-- exchange currency section -->
+      <div class="dib" *ngIf="currencies.selected.active">
+        <div class="selector-title">Exchange Currency</div>
+        <app-dropdown  [exclude]="baseCurrency.active" [list]="baseCurrency.dropdownList"
+          [(active)]="currencies.selected.currency"></app-dropdown>
+      </div>
+
+   
+      <!--from date picker section -->
+      <div class="date-picker dib" *ngIf="currencies.selected.active">
+        <div class="selector-title">Date From</div>
+        <input class="inputForm"  (change)="changeDateFrom($event)" type="date" name="" id="" >
+      </div>
+      <!--to date picker section -->
+      <div class="date-picker dib">
+        <div class="selector-title">Date {{currencies.selected.active?'To':'Time'}}</div>
+        <input class="inputForm" (change)="currencies.selected.active?changeDateTo($event):changeDateBoth($event)" type="date" name="" id="" >
+      </div>
+    </div>
+
+    <div class="timePeriod">
+      {{currencies.selected.active?'Time Period':'Time Date'}}
+      <div class="date-info">
+        {{(this.datePeriod.from|date :'dd/MM/yyyy')}} {{currencies.selected.active?'-'+(this.datePeriod.to|date :'dd/MM/yyyy'):''}}
+      </div>
+    </div>
+
+
+  <!-- list area section -->
+  <div class="list-area" *ngIf="!currencies.selected.active">
+    <ng-container *ngFor="let currency of currencies.list | keyvalue">
+      <div *ngIf="currency.key!=baseCurrency.active" (click)="openSingleCurrency(currency.key)"
+        class="sigle-list link dib">
+        {{currency.key}} - {{currency.value.toFixed(4)}}
+      </div>
+    </ng-container>
+
+  </div>
+
+  <!-- prices chart -->
+  <div class="list-area" *ngIf="!loading && currencies.selected.active && currencies.selected.prices.length>0">
+    <app-chart   [prices]="currencies.selected.prices" [active]="currencies.selected.currency" ></app-chart>
+  </div>
+</div>
